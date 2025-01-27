@@ -1,0 +1,106 @@
+/* Overall layout for the dashboard */
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  gap: 10px;
+}
+
+/* Left Panel: File upload and metadata */
+.file-upload-panel {
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 300px;
+}
+
+.metadata {
+  margin-top: 20px;
+}
+
+/* Center Panel: Tabs and Viewers */
+.viewer-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background-color: #f9f9f9;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tabs {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.tabs button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+.tabs button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* Content area for the viewers */
+.viewer-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: lightgray;
+}
+
+/* Bottom Panel: Log and Controls */
+.log-panel {
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.log-panel button {
+  padding: 10px 15px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.log-panel button:hover {
+  background-color: #218838;
+}
+
+/* Media Query for responsive layout */
+@media (min-width: 768px) {
+  .dashboard-layout {
+    flex-direction: row;
+  }
+
+  .file-upload-panel {
+    width: 25%;
+  }
+
+  .viewer-panel {
+    width: 75%;
+    flex-direction: row;
+  }
+
+  .viewer-content {
+    padding: 20px;
+  }
+}
