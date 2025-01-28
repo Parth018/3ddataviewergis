@@ -1,37 +1,111 @@
-/* Overall layout for the dashboard */
-.dashboard-layout {
+.loading-animation {
   display: flex;
-  flex-direction: column;
-  height: 100vh;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  position: fixed; /* Fixed position ensures it stays in place */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Full viewport width */
+  height: 100vh; /* Full viewport height */
+  background-color: #f3f4f6; /* Light gray background */
+  z-index: 9999; /* Ensure it overlays other content */
 }
 
-/* Left Panel: File upload and metadata */
+.loading-square {
+  width: 50px;
+  height: 50px;
+  background-color: #3b82f6; /* Blue color */
+  animation: scaleUp 1s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes scaleUp {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+}
+
+.dashboard-layout {
+  display: flex;
+  height: 100vh;
+  gap: 10px;
+  overflow: hidden; /* Prevent overflow at the top level */
+  position: relative; /* Position relative to make sure buttons are placed correctly */
+}
+
+/* Sidebar Button (always visible at the top) */
+.sidebar-toggle {
+  position: fixed; /* Fixed position at the top */
+  top: 20px;
+  left: 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  z-index: 1; /* Make sure the button is always on top */
+  transition: 1s;
+}
+
+.sidebar-toggle:hover {
+  background-color: #0056b3;
+}
+
+/* Left Panel: File upload, metadata, and bottom controls */
 .file-upload-panel {
   padding: 20px;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(
+    145deg,
+    #f0f4f8,
+    #e1e8f0
+  ); /* Gradient background */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  width: 300px;
+  max-width: 100%;
+  box-sizing: border-box;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100%;
+}
+
+.file-upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  max-width: 300px;
 }
 
 .metadata {
   margin-top: 20px;
+  color: #444; /* Slightly darker text */
+  text-align: center;
 }
 
 /* Center Panel: Tabs and Viewers */
-.viewer-panel {
+.center-panel {
   display: flex;
   flex-direction: column;
   flex: 1;
   background-color: #f9f9f9;
   padding: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  overflow-y: auto; /* Handle overflow */
 }
 
+/* Tabs styling */
 .tabs {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   margin-bottom: 10px;
 }
 
@@ -57,35 +131,57 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px;
-  background-color: lightgray;
-}
-
-/* Bottom Panel: Log and Controls */
-.log-panel {
   padding: 20px;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background-color: lightgray;
+  height: 100%; /* Ensure it occupies the full height */
 }
 
-.log-panel button {
-  padding: 10px 15px;
+/* Log Panel for 3D Viewer Controls */
+.log-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center; /* Center buttons horizontally */
+  margin-top: 10px;
+}
+
+.toggle-btn {
+  padding: 10px 20px;
   background-color: #28a745;
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 4px;
   font-size: 16px;
+  transition: background-color 0.3s ease; /* Smooth background color transition */
 }
 
-.log-panel button:hover {
+.toggle-btn:hover {
   background-color: #218838;
 }
 
-/* Media Query for responsive layout */
+.toggle-btn:active {
+  transform: scale(0.98); /* Add a slight "click" effect */
+}
+
+/* Loading Indicator */
+.loading-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* Media Query for tablet and larger devices (min-width: 768px) */
 @media (min-width: 768px) {
   .dashboard-layout {
     flex-direction: row;
@@ -93,14 +189,132 @@
 
   .file-upload-panel {
     width: 25%;
+    margin-bottom: 0;
   }
 
-  .viewer-panel {
+  .center-panel {
     width: 75%;
-    flex-direction: row;
+    flex-direction: column;
   }
 
   .viewer-content {
     padding: 20px;
   }
+
+  .toggle-buttons {
+    gap: 20px; /* Add more space on larger screens */
+  }
+}
+
+/* Media Query for small screens and mobile (max-width: 767px) */
+@media (max-width: 767px) {
+  .dashboard-layout {
+    flex-direction: column;
+  }
+
+  .file-upload-panel {
+    width: 100%;
+    margin-bottom: 10px; /* Adding some spacing for mobile layout */
+  }
+
+  .center-panel {
+    width: 100%;
+  }
+
+  .tabs {
+    flex-direction: column;
+    align-items: stretch; /* Make the tabs take full width */
+  }
+
+  .tabs button {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 10px; /* Give some space between buttons */
+  }
+
+  .log-panel {
+    flex-direction: column;
+    align-items: stretch;
+    margin-top: 20px;
+  }
+
+  .log-panel button {
+    width: 100%;
+    margin-bottom: 10px; /* Space between buttons on small screens */
+  }
+}
+
+/* Custom Styles for the "Choose File" Button */
+
+/* Make sure the file input button is hidden */
+.file-upload-content input[type="file"] {
+  display: none; /* Hide default file input */
+}
+
+/* Style the custom file input button */
+.custom-file-upload {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  width: 200px;
+  text-align: center; /* Center the text */
+}
+
+/* Hover effect for the custom file input button */
+.custom-file-upload:hover {
+  background-color: #0056b3;
+}
+
+/* "Choose File" button icon and text styling */
+.custom-file-upload::before {
+  /*content: "📂 Choose File";  Add an icon and text */
+  margin-right: 10px; /* Space between icon and text */
+  font-size: 18px;
+}
+
+/* Optional: Customize the default text ("No file chosen") */
+.file-upload-content input[type="file"]:focus + .custom-file-upload {
+  border-color: #0056b3;
+}
+
+/* File input styling */
+.file-upload-panel {
+  padding: 20px;
+  background: linear-gradient(
+    145deg,
+    #f0f4f8,
+    #e1e8f0
+  ); /* Gradient background */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  width: 300px;
+  max-width: 100%;
+  box-sizing: border-box;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100%;
+}
+
+.file-upload-panel input[type="file"] {
+  display: none; /* Hide the default file input */
+}
+
+/* Ensure the map takes the full height of its container */
+#map {
+  width: 100%;
+  height: 100vh; /* Take full height of the viewport */
+  position: relative; /* Add position relative for better control */
+}
+
+/* For pop-up, set the max-width to keep it responsive */
+.popup-metadata {
+  max-width: 90%;
+  overflow: auto;
 }

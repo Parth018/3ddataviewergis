@@ -5,17 +5,22 @@ import "mapbox-gl/dist/mapbox-gl.css";
 mapboxgl.accessToken =
   "pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2lqbmpqazdlMDBsdnRva284cWd3bm11byJ9.V6Hg2oYJwMAxeoR9GEzkAA";
 
-function GISViewer({ geoJsonData }) {
+function GISViewer({ geoJsonData, isSidebarOpen }) {
   const mapContainerRef = useRef();
   const [popupContent, setPopupContent] = useState(null);
   const popupRef = useRef(null); // Track popup instance
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
   useEffect(() => {
+    const handleResize = () => {
+      setWindowHeight(window.innerHeight); // Update the height on resize
+    };
+
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v11",
-      center: [-74.5, 40], // Default center if geoJsonData is not provided
+      center: [-80.51, 43.46], // Default center if geoJsonData is not provided
       zoom: 4, // Default zoom level
     });
 
@@ -149,23 +154,28 @@ function GISViewer({ geoJsonData }) {
 
         // Use fitBounds to fit the map to the bounding box of the data
         if (bounds.isEmpty()) {
-          map.setCenter([-74.5, 40]); // If no bounds, set default center
+          map.setCenter([-80.51, 43.46]); // If no bounds, set default center
         } else {
           map.fitBounds(bounds, { padding: 50 });
         }
       });
     }
-
+    window.addEventListener("resize", handleResize);
+    // Trigger resize to adjust map layout when sidebar is toggled
+    if (!isSidebarOpen) {
+      window.dispatchEvent(new Event("resize"));
+    }
     return () => {
       map.remove();
+      window.removeEventListener("resize", handleResize);
       if (popupRef.current) popupRef.current.remove(); // Cleanup popup
     };
-  }, [geoJsonData]);
+  }, [geoJsonData, isSidebarOpen]);
 
   return (
     <div
       id="map"
-      style={{ width: "100%", height: "900px" }}
+      style={{ height: `${windowHeight}px` }} // Dynamically adjust height
       ref={mapContainerRef}
       className="h-full w-full"
       aria-hidden={isPopupOpen ? "true" : "false"} // Hide map when popup is open
