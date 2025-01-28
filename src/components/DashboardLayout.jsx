@@ -50,6 +50,7 @@ function DashboardLayout() {
                 <FileUpload
                   setPointCloudData={setPointCloudData}
                   setGeoJsonData={setGeoJsonData}
+                  onFileUpload={setPointCloudData}
                 />
                 <div className="metadata">
                   {/* Display metadata if needed */}
@@ -97,7 +98,14 @@ function DashboardLayout() {
             )}
 
             <div className="viewer-content">
-              {activeTab === "3D" && (
+              {activeTab === "3D" && pointCloudData && (
+                // <ThreeDViewer
+                //   pointCloudData={pointCloudData || []}
+                //   pointSize={pointSize}
+                //   colorByAltitude={colorByAltitude}
+                //   setPointSize={setPointSize}
+                //   setColorByAltitude={setColorByAltitude}
+                // />
                 <ThreeDViewer
                   pointCloudData={pointCloudData || []}
                   pointSize={pointSize}

@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { parsePointCloudData } from "../utils/parsePointCloud";
 import { calculatePointCloudMetadata } from "../utils/calculateMetadata";
 
-const FileUpload = ({ setPointCloudData, setGeoJsonData }) => {
+const FileUpload = ({ setPointCloudData, setGeoJsonData, onFileUpload }) => {
   const [file, setFile] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [metadata, setMetadata] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false); // New state for processing indication
+  const [fileInfo, setFileInfo] = useState(null);
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -21,6 +22,7 @@ const FileUpload = ({ setPointCloudData, setGeoJsonData }) => {
 
     reader.onload = (event) => {
       const fileData = event.target.result;
+      const content = reader.result;
 
       if (
         fileExtension === "pcd" ||
@@ -28,17 +30,45 @@ const FileUpload = ({ setPointCloudData, setGeoJsonData }) => {
         fileExtension === "ply"
       ) {
         try {
-          if (fileExtension === "ply") {
-            // If it's a PLY file, pass the ArrayBuffer to the processPlyFile function
-            const arrayBuffer = fileData; // ArrayBuffer from readAsArrayBuffer
-            processPlyFile(arrayBuffer);
-          } else {
-            // For other file types, process as text
-            const pointCloudData = parsePointCloudData(fileData);
-            const metadata = calculatePointCloudMetadata(pointCloudData);
-            setMetadata(metadata);
-            setPointCloudData({ pointCloudData, metadata });
-          }
+          // if (fileExtension === "ply") {
+          //   // If it's a PLY file, pass the ArrayBuffer to the processPlyFile function
+          //   const arrayBuffer = fileData; // ArrayBuffer from readAsArrayBuffer
+          //   processPlyFile(arrayBuffer);
+          // } else {
+          //   // For other file types, process as text
+          //   const pointCloudData = parsePointCloudData(fileData);
+          //   const metadata = calculatePointCloudMetadata(pointCloudData);
+          //   setMetadata(metadata);
+          //   setPointCloudData({ pointCloudData, metadata });
+          // }
+          const lines = content.split("\n");
+          const points = lines.length;
+          const vertices = [];
+
+          lines.forEach((line) => {
+            const [x, y, z] = line.trim().split(" ").map(Number);
+            if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
+              vertices.push([x, y, z]);
+            }
+          });
+
+          const boundingBox = {
+            minX: Math.min(...vertices.map((v) => v[0])),
+            maxX: Math.max(...vertices.map((v) => v[0])),
+            minY: Math.min(...vertices.map((v) => v[1])),
+            maxY: Math.max(...vertices.map((v) => v[1])),
+            minZ: Math.min(...vertices.map((v) => v[2])),
+            maxZ: Math.max(...vertices.map((v) => v[2])),
+          };
+          const fileMetadata = {
+            name: selectedFile.name,
+            size: (selectedFile.size / 1024).toFixed(2) + " KB",
+            points,
+            boundingBox,
+          };
+
+          setFileInfo(fileMetadata);
+          onFileUpload({ file: selectedFile, vertices });
         } catch (err) {
           setErrorMessage("Error parsing point cloud data");
         }
@@ -57,46 +87,7 @@ const FileUpload = ({ setPointCloudData, setGeoJsonData }) => {
       setIsProcessing(false); // End processing
     };
 
-    // Conditionally read as ArrayBuffer or Text based on file type
-    if (fileExtension === "ply") {
-      reader.readAsArrayBuffer(selectedFile); // For PLY files
-    } else {
-      reader.readAsText(selectedFile); // For other file types
-    }
-  };
-
-  // New function for handling large .ply files incrementally
-  const processPlyFile = (fileData) => {
-    const chunkSize = 1000 * 12; // 1000 vertices, 12 bytes each
-    let chunkIndex = 0;
-    let pointCloudData = [];
-
-    const processChunk = () => {
-      try {
-        const chunk = fileData.slice(chunkIndex, chunkIndex + chunkSize);
-        chunkIndex += chunkSize;
-
-        const chunkData = parsePointCloudData(chunk);
-        pointCloudData = [...pointCloudData, ...chunkData];
-
-        if (chunkIndex < fileData.byteLength) {
-          setTimeout(processChunk, 0); // Process next chunk
-        } else {
-          const metadata = calculatePointCloudMetadata(pointCloudData);
-          setMetadata(metadata);
-          setPointCloudData({ pointCloudData, metadata });
-        }
-      } catch (err) {
-        setErrorMessage(
-          `Error processing chunk at index ${chunkIndex / chunkSize}: ${
-            err.message
-          }`
-        );
-        setIsProcessing(false); // Stop processing
-      }
-    };
-
-    processChunk(); // Start processing
+    reader.readAsText(selectedFile);
   };
 
   return (
@@ -105,7 +96,7 @@ const FileUpload = ({ setPointCloudData, setGeoJsonData }) => {
         📂 Choose File
       </label>
       <input id="file-upload" type="file" onChange={handleFileChange} />
-      {isProcessing && <p>Processing file...</p>} {/* Show loading indicator */}
+      {/* {isProcessing && <p>Processing file...</p>} 
       {file && !errorMessage && !isProcessing && (
         <div className="file-info">
           <p>Filename: {file.name}</p>
@@ -121,6 +112,27 @@ const FileUpload = ({ setPointCloudData, setGeoJsonData }) => {
               </p>
             </>
           )}
+        </div>
+      )} */}
+      {fileInfo && (
+        <div className="file-info">
+          <p>Filename: {fileInfo.name}</p>
+          <p>File Size: {fileInfo.size}</p>
+          <p>Number of Points: {fileInfo.points}</p>
+          <p>
+            Bounding Box:
+            <ul>
+              <li>
+                X: {fileInfo.boundingBox.minX} to {fileInfo.boundingBox.maxX}
+              </li>
+              <li>
+                Y: {fileInfo.boundingBox.minY} to {fileInfo.boundingBox.maxY}
+              </li>
+              <li>
+                Z: {fileInfo.boundingBox.minZ} to {fileInfo.boundingBox.maxZ}
+              </li>
+            </ul>
+          </p>
         </div>
       )}
       {errorMessage && <p className="error">{errorMessage}</p>}
