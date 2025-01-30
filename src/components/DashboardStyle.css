@@ -38,8 +38,8 @@
 }
 
 /* Sidebar Button (always visible at the top) */
-.sidebar-toggle {
-  position: fixed; /* Fixed position at the top */
+/* .sidebar-toggle {
+  position: fixed;
   top: 20px;
   left: 20px;
   background-color: #007bff;
@@ -49,12 +49,51 @@
   font-size: 16px;
   cursor: pointer;
   border-radius: 5px;
-  z-index: 1; /* Make sure the button is always on top */
+  z-index: 1;
   transition: 1s;
 }
 
 .sidebar-toggle:hover {
   background-color: #0056b3;
+} */
+.sidebar-toggle {
+  position: fixed; /* Fixed position at the top */
+  top: 20px;
+  left: 20px;
+  background: linear-gradient(
+    45deg,
+    #1e90ff,
+    #007bff
+  ); /* Gradient background */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px; /* Slightly more rounded corners */
+  z-index: 1; /* Make sure the button is always on top */
+  transition: all 0.3s ease-in-out; /* Smooth transition for hover effect */
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3); /* Subtle shadow for depth */
+}
+
+.sidebar-toggle:hover {
+  background: linear-gradient(
+    45deg,
+    #0056b3,
+    #1e90ff
+  ); /* Reverse the gradient on hover */
+  transform: translateY(-2px); /* Slight upward movement on hover */
+  box-shadow: 0 6px 12px rgba(0, 123, 255, 0.5); /* Darker shadow for emphasis */
+}
+
+.sidebar-toggle:active {
+  background: linear-gradient(
+    45deg,
+    #004085,
+    #0056b3
+  ); /* Darker gradient on click */
+  transform: translateY(2px); /* Button pressed effect */
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.4); /* Softer shadow on click */
 }
 
 /* Left Panel: File upload, metadata, and bottom controls */
@@ -134,6 +173,45 @@
   padding: 20px;
   background-color: lightgray;
   height: 100%; /* Ensure it occupies the full height */
+}
+.Welcome-text {
+  font-size: clamp(18px, 4vw, 32px); /* Responsive font size */
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+  text-transform: uppercase;
+  background: linear-gradient(
+    45deg,
+    #ff416c,
+    #ff4b2b,
+    #1e90ff,
+    #7b68ee
+  ); /* Vibrant 3D colors */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; /* Gradient text effect */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* 3D shadow effect */
+  opacity: 0;
+  transform: scale(0.9);
+  animation: fadeInScale 1.5s ease-out forwards;
+}
+
+/* Smooth fade-in & scaling animation */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Ensure text stays centered & readable on smaller screens */
+@media (max-width: 600px) {
+  .Welcome-text {
+    font-size: clamp(16px, 5vw, 28px);
+  }
 }
 
 /* Log Panel for 3D Viewer Controls */

@@ -48,7 +48,22 @@ function GISViewer({ geoJsonData, isSidebarOpen }) {
 
           // If geometry is a point, use e.lngLat directly
           if (geometry.type === "Point") {
-            lngLat = geometry.coordinates;
+            //lngLat = geometry.coordinates;
+            const [lng, lat] = geometry.coordinates;
+            lngLat = { lng, lat }; // Convert array to object
+          } else if (geometry.type === "LineString") {
+            // Compute the midpoint of the LineString
+            const totalPoints = geometry.coordinates.length;
+            const sum = geometry.coordinates.reduce(
+              (acc, [lng, lat]) => {
+                acc.lng += lng;
+                acc.lat += lat;
+                return acc;
+              },
+              { lng: 0, lat: 0 }
+            );
+
+            lngLat = { lng: sum.lng / totalPoints, lat: sum.lat / totalPoints }; // Midpoint
           } else if (
             geometry.type === "Polygon" ||
             geometry.type === "MultiPolygon"
@@ -79,7 +94,7 @@ function GISViewer({ geoJsonData, isSidebarOpen }) {
                 4
               )}, lat:${lngLat.lat.toFixed(4)}] <br/>
               <strong>Description:</strong> ${
-                properties.admin ? properties.admin : "Unknown"
+                properties.admin ? properties.state : "N/A"
               } <br/>
               ${
                 properties.description
@@ -89,7 +104,7 @@ function GISViewer({ geoJsonData, isSidebarOpen }) {
               ${
                 properties.tags
                   ? `<strong>Tags:</strong> ${properties.tags}`
-                  : "<strong>Tags:</strong> N/A"
+                  : `<strong>Geometry Type:</strong> ${geometry.type}`
               }
             `;
 
