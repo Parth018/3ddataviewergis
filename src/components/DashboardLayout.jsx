@@ -16,15 +16,20 @@ function DashboardLayout() {
   const [pointCloudData, setPointCloudData] = useState(null);
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [pointSize, setPointSize] = useState(0.05); // State for point size
-  const [colorByAltitude, setColorByAltitude] = useState(false); // State for color by altitude
+  const [colorByAltitude, setColorByAltitude] = useState(true); // State for color by altitude
   const [activeTab, setActiveTab] = useState(""); // Default active tab is '3D'
   const [loading, setLoading] = useState(true); // State to track loading status
   const [sidebarOpen, setSidebarOpen] = useState(false); // State to track sidebar visibility
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen); // Toggle sidebar open/close
   const timeoutRef = useRef(null); // Use useRef to store the timeout ID
   const [minAltitude, setMinAltitude] = useState(-Infinity); // Minimum Altitude
-  const [maxAltitude, setMaxAltitude] = useState(Infinity); // Maximum Altitude
+  const [maxAltitude, setMaxAltitude] = useState(Infinity);  // Maximum Altitude
 
+  // Function to handle altitude range change
+  const handleAltitudeChange = (e) => {
+    const newMaxAltitude = parseFloat(e.target.value);
+    setMaxAltitude(newMaxAltitude);
+  };
   // Simulating data load
   useEffect(() => {
     setTimeout(() => {
@@ -123,17 +128,27 @@ function DashboardLayout() {
                     />
                   </label>
                   <label>
-                    Min Altitude:
-                    <input
+                    Adjust Altitude Range:
+                    {/* <input
                       type="number"
                       value={minAltitude}
                       onChange={(e) =>
                         setMinAltitude(parseFloat(e.target.value).toFixed(6))
                       }
                       step="0.000001" // Controls the precision of the number input
+                    /> */}
+                      <input
+                      type="range"
+                      id="altitudeRange"
+                      min={minAltitude}
+                      max={2000} // Set a reasonable default max range or dynamically update
+                      step="10"
+                      value={maxAltitude}
+                      onChange={handleAltitudeChange}
                     />
+                    <span>{maxAltitude}m</span> {/* Display selected altitude */}
                   </label>
-                  <label>
+                  {/* <label>
                     Max Altitude:
                     <input
                       type="number"
@@ -143,7 +158,7 @@ function DashboardLayout() {
                       }
                       step="0.000001" // Controls the precision of the number input
                     />
-                  </label>
+                  </label> */}
                 </div>
               </div>
             )}
