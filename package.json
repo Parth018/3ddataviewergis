@@ -13,9 +13,12 @@
     "three": "^0.172.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+      "start": "react-scripts start",
+      "start": "craco start",
+      "build": "react-scripts build",
+      "build": "craco build",
+      "test": "react-scripts test",
+      "test": "craco test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -41,6 +44,7 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^7.1.0",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.1",
     "tailwindcss": "^4.0.0",
