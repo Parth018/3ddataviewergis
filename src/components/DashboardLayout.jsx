@@ -23,7 +23,7 @@ function DashboardLayout() {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen); // Toggle sidebar open/close
   const timeoutRef = useRef(null); // Use useRef to store the timeout ID
   const [minAltitude, setMinAltitude] = useState(-Infinity); // Minimum Altitude
-  const [maxAltitude, setMaxAltitude] = useState(Infinity);  // Maximum Altitude
+  const [maxAltitude, setMaxAltitude] = useState(1000);  // Maximum Altitude
 
   // Function to handle altitude range change
   const handleAltitudeChange = (e) => {
