@@ -5,7 +5,7 @@ import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-load
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
-mapboxgl.accessToken = "pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2lqbmpqazdlMDBsdnRva284cWd3bm11byJ9.V6Hg2oYJwMAxeoR9GEzkAA";
+mapboxgl.accessToken = "pk.eyJ1IjoicGFydGg5ODciLCJhIjoiY202bGRoNmRtMDg3bzJrcTM5YTJjamJ1bSJ9.pKAUuLcrFmD6XaGoawZkbw";
 
 
 function GISViewer({ geoJsonData, isSidebarOpen }) {
@@ -22,7 +22,7 @@ function GISViewer({ geoJsonData, isSidebarOpen }) {
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: "mapbox://styles/mapbox/streets-v11",
+      style: "mapbox://styles/mapbox/streets-v9",
       center: [-80.51, 43.46], // Default center if geoJsonData is not provided
       zoom: 4, // Default zoom level
     });
