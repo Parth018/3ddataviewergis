@@ -13,9 +13,11 @@ function GISViewer({ geoJsonData, isSidebarOpen }) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
-  useEffect(() => {
+  useEffect(() => { 
+    console.log("GISViewer mounted");
     const handleResize = () => {
       setWindowHeight(window.innerHeight); // Update the height on resize
+      console.log("Window resized, new height:", window.innerHeight);
     };
 
     const map = new mapboxgl.Map({
@@ -27,6 +29,7 @@ function GISViewer({ geoJsonData, isSidebarOpen }) {
 
     if (geoJsonData) {
       map.on("load", () => {
+        console.log("Map loaded, adding GeoJSON data");
         map.addSource("geojson-data", {
           type: "geojson",
           data: geoJsonData,
@@ -46,7 +49,7 @@ function GISViewer({ geoJsonData, isSidebarOpen }) {
           const properties = e.features[0].properties;
           const geometry = e.features[0].geometry;
           let lngLat;
-
+          console.log("Point clicked:", properties, geometry);
           // If geometry is a point, use e.lngLat directly
           if (geometry.type === "Point") {
             //lngLat = geometry.coordinates;
@@ -88,7 +91,7 @@ function GISViewer({ geoJsonData, isSidebarOpen }) {
             console.error("Unsupported geometry type:", geometry.type);
             return;
           }
-
+          console.log("Calculated lngLat:", lngLat);
           if (lngLat && Array.isArray([lngLat.lng, lngLat.lat])) {
             const newPopupContent = ` 
               <strong>Coordinates:</strong> [lng:${lngLat.lng.toFixed(
@@ -170,8 +173,10 @@ function GISViewer({ geoJsonData, isSidebarOpen }) {
 
         // Use fitBounds to fit the map to the bounding box of the data
         if (bounds.isEmpty()) {
+          console.log("Bounds are empty, setting default center");
           map.setCenter([-80.51, 43.46]); // If no bounds, set default center
         } else {
+          console.log("Fitting map to bounds");
           map.fitBounds(bounds, { padding: 50 });
         }
       });
@@ -182,6 +187,7 @@ function GISViewer({ geoJsonData, isSidebarOpen }) {
       window.dispatchEvent(new Event("resize"));
     }
     return () => {
+      console.log("Cleaning up map and event listeners");
       map.remove();
       window.removeEventListener("resize", handleResize);
       if (popupRef.current) popupRef.current.remove(); // Cleanup popup
