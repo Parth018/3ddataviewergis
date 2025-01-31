@@ -373,13 +373,13 @@
     /* width: 100%; */
     flex-direction: column;
   }
-  .sidebar-toggle {
+  /* .sidebar-toggle {
     top: 10px;
     left: 50%;
-    transform: translateX(-50%); /* Center the button */
+    transform: translateX(-50%); /* Center the button 
     width: auto;
     padding: 8px 15px;
-  }
+  } */
 
   .tabs {
     flex-direction: column;
