@@ -58,8 +58,8 @@
 } */
 .sidebar-toggle {
   position: fixed; /* Fixed position at the top */
-  top: 20px;
-  left: 20px;
+  top: 10px;
+  left: 10px;
   background: linear-gradient(
     45deg,
     #1e90ff,
@@ -241,7 +241,7 @@
   width: 100%; /* Ensure it fills the parent */
   overflow: hidden; /* Prevent content overflow */
 }
-.d-data {
+.viewer-content >* {
   max-width: 100%;
   max-height: 100%;
   overflow: hidden;
