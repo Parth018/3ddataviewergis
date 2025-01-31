@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import "mapbox-gl/dist/mapbox-gl.css";
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2lqbmpqazdlMDBsdnRva284cWd3bm11byJ9.V6Hg2oYJwMAxeoR9GEzkAA";
+console.log("Mapbox Token:", mapboxgl.accessToken);
 
 
 function GISViewer({ geoJsonData, isSidebarOpen }) {
