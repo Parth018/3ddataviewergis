@@ -10,6 +10,8 @@ const ThreeDViewer = ({
   colorByAltitude,
   setPointSize,
   setColorByAltitude,
+  minAltitude,
+  maxAltitude,
 }) => {
   const canvasRef = useRef(null);
   useEffect(() => {
@@ -28,6 +30,55 @@ const ThreeDViewer = ({
     const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
     renderer.setSize(window.innerWidth, window.innerHeight);
 
+    // Function to apply color based on altitude
+    const applyColorByAltitude = (
+      geometry,
+      positions,
+      colorByAltitude,
+      minAltitude,
+      maxAltitude
+    ) => {
+      if (colorByAltitude) {
+        const colors = new Float32Array(positions.length);
+        let minZ = Infinity,
+          maxZ = -Infinity;
+
+        // Find the min and max Z values
+        for (let i = 2; i < positions.length; i += 3) {
+          const z = positions[i];
+          minZ = Math.min(minZ, z);
+          maxZ = Math.max(maxZ, z);
+        }
+        // if (!minAltitude || !maxAltitude) {
+        //   for (let i = 2; i < positions.length; i += 3) {
+        //     const z = positions[i];
+        //     minZ = Math.min(minZ, z);
+        //     maxZ = Math.max(maxZ, z);
+        //   }
+        // } else {
+        //   minZ = minAltitude;
+        //   maxZ = maxAltitude;
+        // }
+
+        // Log the min and max altitudes in your point cloud
+        console.log(`Min Z (Altitude): ${minZ}`);
+        console.log(`Max Z (Altitude): ${maxZ}`);
+
+        // Apply colors based on altitude
+        for (let i = 2, j = 0; i < positions.length; i += 3, j += 3) {
+          const z = positions[i];
+          if (z < minAltitude || z > maxAltitude) continue; // Filter by altitude range
+          const normalizedZ = (z - minZ) / (maxZ - minZ);
+          const color = new THREE.Color().setHSL(normalizedZ * 0.7, 1.0, 0.5);
+          colors[j] = color.r;
+          colors[j + 1] = color.g;
+          colors[j + 2] = color.b;
+        }
+
+        geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+      }
+    };
+
     // Handle different file formats
     const handleFile = async () => {
       if (file.name.endsWith(".pcd")) {
@@ -36,37 +87,48 @@ const ThreeDViewer = ({
           pointCloud.material.size = pointSize;
           pointCloud.material.needsUpdate = true;
           // Color by altitude logic for PCD
-          if (colorByAltitude) {
-            const positions = pointCloud.geometry.attributes.position.array;
-            const colors = new Float32Array(positions.length);
+          // if (colorByAltitude) {
+          //   const positions = pointCloud.geometry.attributes.position.array;
+          //   const colors = new Float32Array(positions.length);
 
-            let minZ = Infinity,
-              maxZ = -Infinity;
-            for (let i = 2; i < positions.length; i += 3) {
-              const z = positions[i];
-              minZ = Math.min(minZ, z);
-              maxZ = Math.max(maxZ, z);
-            }
+          //   let minZ = Infinity,
+          //     maxZ = -Infinity;
+          //   for (let i = 2; i < positions.length; i += 3) {
+          //     const z = positions[i];
+          //     minZ = Math.min(minZ, z);
+          //     maxZ = Math.max(maxZ, z);
+          //   }
 
-            for (let i = 2, j = 0; i < positions.length; i += 3, j += 3) {
-              const z = positions[i];
-              const normalizedZ = (z - minZ) / (maxZ - minZ);
-              const color = new THREE.Color().setHSL(
-                normalizedZ * 0.7,
-                1.0,
-                0.5
-              );
-              colors[j] = color.r;
-              colors[j + 1] = color.g;
-              colors[j + 2] = color.b;
-            }
+          //   for (let i = 2, j = 0; i < positions.length; i += 3, j += 3) {
+          //     const z = positions[i];
+          //     if (z < minAltitude || z > maxAltitude) continue; // Filter by altitude range
+          //     const normalizedZ = (z - minZ) / (maxZ - minZ);
+          //     const color = new THREE.Color().setHSL(
+          //       normalizedZ * 0.7,
+          //       1.0,
+          //       0.5
+          //     );
+          //     colors[j] = color.r;
+          //     colors[j + 1] = color.g;
+          //     colors[j + 2] = color.b;
+          //   }
 
-            pointCloud.geometry.setAttribute(
-              "color",
-              new THREE.BufferAttribute(colors, 3)
-            );
-            pointCloud.material.vertexColors = true; // Set vertexColors as true
-          }
+          //   pointCloud.geometry.setAttribute(
+          //     "color",
+          //     new THREE.BufferAttribute(colors, 3)
+          //   );
+          //   pointCloud.material.vertexColors = true; // Set vertexColors as true
+          // }
+          const positions = pointCloud.geometry.attributes.position.array;
+          applyColorByAltitude(
+            pointCloud.geometry,
+            positions,
+            colorByAltitude,
+            minAltitude,
+            maxAltitude
+          );
+
+          pointCloud.material.vertexColors = colorByAltitude ? true : false;
 
           scene.add(pointCloud);
         });
@@ -79,36 +141,46 @@ const ThreeDViewer = ({
             color: !colorByAltitude ? "white" : null,
           });
           // Color by altitude logic for PLY
-          if (colorByAltitude) {
-            const positions = geometry.attributes.position.array;
-            const colors = new Float32Array(positions.length);
+          // if (colorByAltitude) {
+          //   const positions = geometry.attributes.position.array;
+          //   const colors = new Float32Array(positions.length);
 
-            let minZ = Infinity,
-              maxZ = -Infinity;
-            for (let i = 2; i < positions.length; i += 3) {
-              const z = positions[i];
-              minZ = Math.min(minZ, z);
-              maxZ = Math.max(maxZ, z);
-            }
+          //   let minZ = Infinity,
+          //     maxZ = -Infinity;
+          //   for (let i = 2; i < positions.length; i += 3) {
+          //     const z = positions[i];
+          //     minZ = Math.min(minZ, z);
+          //     maxZ = Math.max(maxZ, z);
+          //   }
 
-            for (let i = 2, j = 0; i < positions.length; i += 3, j += 3) {
-              const z = positions[i];
-              const normalizedZ = (z - minZ) / (maxZ - minZ);
-              const color = new THREE.Color().setHSL(
-                normalizedZ * 0.7,
-                1.0,
-                0.5
-              );
-              colors[j] = color.r;
-              colors[j + 1] = color.g;
-              colors[j + 2] = color.b;
-            }
+          //   for (let i = 2, j = 0; i < positions.length; i += 3, j += 3) {
+          //     const z = positions[i];
+          //     if (z < minAltitude || z > maxAltitude) continue; // Filter by altitude range
+          //     const normalizedZ = (z - minZ) / (maxZ - minZ);
+          //     const color = new THREE.Color().setHSL(
+          //       normalizedZ * 0.7,
+          //       1.0,
+          //       0.5
+          //     );
+          //     colors[j] = color.r;
+          //     colors[j + 1] = color.g;
+          //     colors[j + 2] = color.b;
+          //   }
 
-            geometry.setAttribute(
-              "color",
-              new THREE.BufferAttribute(colors, 3)
-            );
-          }
+          //   geometry.setAttribute(
+          //     "color",
+          //     new THREE.BufferAttribute(colors, 3)
+          //   );
+          // }
+          const positions = geometry.attributes.position.array;
+          applyColorByAltitude(
+            geometry,
+            positions,
+            colorByAltitude,
+            minAltitude,
+            maxAltitude
+          );
+
           const points = new THREE.Points(geometry, material);
           scene.add(points);
         });
@@ -122,25 +194,33 @@ const ThreeDViewer = ({
             new THREE.BufferAttribute(positions, 3)
           );
           // Color by altitude logic for XYZ
-          if (colorByAltitude) {
-            const colors = new Float32Array(vertices.length * 3);
-            const zValues = vertices.map((v) => v[2]);
-            const minZ = Math.min(...zValues);
-            const maxZ = Math.max(...zValues);
+          // if (colorByAltitude) {
+          //   const colors = new Float32Array(vertices.length * 3);
+          //   const zValues = vertices.map((v) => v[2]);
+          //   const minZ = Math.min(...zValues);
+          //   const maxZ = Math.max(...zValues);
 
-            vertices.forEach(([x, y, z], index) => {
-              const normalizedZ = (z - minZ) / (maxZ - minZ);
-              const color = new THREE.Color().setHSL(normalizedZ, 1, 0.5);
-              colors[index * 3] = color.r;
-              colors[index * 3 + 1] = color.g;
-              colors[index * 3 + 2] = color.b;
-            });
+          //   vertices.forEach(([x, y, z], index) => {
+          //     if (z < minAltitude || z > maxAltitude) return; // Filter by altitude range
+          //     const normalizedZ = (z - minZ) / (maxZ - minZ);
+          //     const color = new THREE.Color().setHSL(normalizedZ, 1, 0.5);
+          //     colors[index * 3] = color.r;
+          //     colors[index * 3 + 1] = color.g;
+          //     colors[index * 3 + 2] = color.b;
+          //   });
 
-            geometry.setAttribute(
-              "color",
-              new THREE.BufferAttribute(colors, 3)
-            );
-          }
+          //   geometry.setAttribute(
+          //     "color",
+          //     new THREE.BufferAttribute(colors, 3)
+          //   );
+          // }
+          applyColorByAltitude(
+            geometry,
+            positions,
+            colorByAltitude,
+            minAltitude,
+            maxAltitude
+          );
 
           const material = new THREE.PointsMaterial({
             size: pointSize,
@@ -179,7 +259,7 @@ const ThreeDViewer = ({
       controls.dispose();
       window.removeEventListener("resize", handleResize);
     };
-  }, [pointCloudData, pointSize, colorByAltitude]);
+  }, [pointCloudData, pointSize, colorByAltitude, minAltitude, maxAltitude]);
 
   return (
     <div>

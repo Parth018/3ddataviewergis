@@ -125,8 +125,73 @@
 
 .metadata {
   margin-top: 20px;
-  color: #444; /* Slightly darker text */
+  color: #333; /* Slightly darker for better contrast */
   text-align: center;
+  font-size: 1rem; /* Base font size */
+  font-weight: 500; /* Medium weight for emphasis */
+  background: rgba(0, 0, 0, 0.05); /* Light background for subtle contrast */
+  padding: 12px 18px; /* Padding for spacing */
+  border-radius: 8px; /* Soft rounded corners */
+  display: inline-block; /* Prevents full-width stretching */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+  width: 100%; /* Ensure responsiveness */
+  max-width: 600px; /* Prevents excessive stretching */
+}
+
+.point-cloud-matrix {
+  font-size: 1.2rem; /* Larger for emphasis */
+  font-weight: bold; /* Make it stand out */
+  text-transform: uppercase; /* Distinctive look */
+  color: #557fac; /* Highlight with a blue shade */
+  border-bottom: 3px solid #a1a5a9; /* Underline for separation */
+  padding-bottom: 5px; /* Space below */
+  display: inline-block; /* Keep width limited */
+  letter-spacing: 1px; /* Improve readability */
+}
+
+.metadata p {
+  margin: 10px 0; /* Consistent spacing for all text */
+  font-size: 1rem; /* Readable text size */
+  color: #444; /* Dark grey for readability */
+  text-align: left; /* Align text for better readability */
+}
+
+.bounding-box {
+  font-weight: bold; /* Emphasize bounding box */
+  color: #0e0d0d; /* Different color for distinction */
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .metadata {
+    font-size: 0.9rem; /* Slightly smaller for mobile */
+    padding: 10px 12px; /* Adjust padding */
+    max-width: 90%; /* Allow more flexibility */
+  }
+
+  .point-cloud-matrix {
+    font-size: 1rem; /* Adjust heading size */
+  }
+
+  .metadata p {
+    font-size: 0.9rem; /* Reduce text size slightly */
+  }
+}
+
+@media (max-width: 480px) {
+  .metadata {
+    font-size: 0.85rem;
+    padding: 8px 10px;
+    max-width: 95%;
+  }
+
+  .point-cloud-matrix {
+    font-size: 0.9rem; /* Further reduce heading size */
+  }
+
+  .metadata p {
+    font-size: 0.85rem;
+  }
 }
 
 /* Center Panel: Tabs and Viewers */
@@ -173,6 +238,13 @@
   padding: 20px;
   background-color: lightgray;
   height: 100%; /* Ensure it occupies the full height */
+  width: 100%; /* Ensure it fills the parent */
+  overflow: hidden; /* Prevent content overflow */
+}
+.d-data {
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
 }
 .Welcome-text {
   font-size: clamp(18px, 4vw, 32px); /* Responsive font size */
@@ -281,6 +353,8 @@
 
   .toggle-buttons {
     gap: 20px; /* Add more space on larger screens */
+    display: flex;
+    flex-wrap: wrap; /* Ensure flex items wrap on larger screens */
   }
 }
 
@@ -296,12 +370,22 @@
   }
 
   .center-panel {
-    width: 100%;
+    /* width: 100%; */
+    flex-direction: column;
+  }
+  .sidebar-toggle {
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%); /* Center the button */
+    width: auto;
+    padding: 8px 15px;
   }
 
   .tabs {
     flex-direction: column;
     align-items: stretch; /* Make the tabs take full width */
+    margin-top: 50px; /* Add margin to avoid overlap with sidebar button */
+    width: 100%; /* Full-width on mobile */
   }
 
   .tabs button {
@@ -309,16 +393,44 @@
     margin-right: 0;
     margin-bottom: 10px; /* Give some space between buttons */
   }
+  /* Sidebar toggle button adjustment on mobile */
+  .sidebar-toggle {
+    top: 15px;
+    left: 15px;
+  }
 
   .log-panel {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     margin-top: 20px;
+    padding: 10px; /* Add padding for better spacing */
   }
 
-  .log-panel button {
+  /* .log-panel button {
     width: 100%;
-    margin-bottom: 10px; /* Space between buttons on small screens */
+    margin-bottom: 10px; /* Space between buttons on small screens 
+  } */
+  .toggle-buttons {
+    gap: 15px; /* Slightly reduced gap for smaller screens */
+    display: flex;
+    flex-direction: column; /* Stack inputs vertically */
+    align-items: flex-start;
+  }
+
+  .toggle-buttons label {
+    width: 100%; /* Make labels take full width */
+  }
+  .toggle-buttons input[type="range"],
+  .toggle-buttons input[type="number"],
+  .toggle-buttons input[type="checkbox"] {
+    width: 100%; /* Make inputs take full width */
+    margin-bottom: 10px; /* Space between inputs */
+  }
+
+  .toggle-buttons input[type="checkbox"] {
+    width: auto; /* Checkbox input should be as wide as needed */
+    margin-bottom: 0; /* Remove bottom margin for checkbox */
   }
 }
 

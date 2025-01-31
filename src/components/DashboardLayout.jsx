@@ -22,6 +22,9 @@ function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false); // State to track sidebar visibility
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen); // Toggle sidebar open/close
   const timeoutRef = useRef(null); // Use useRef to store the timeout ID
+  const [minAltitude, setMinAltitude] = useState(-Infinity); // Minimum Altitude
+  const [maxAltitude, setMaxAltitude] = useState(Infinity); // Maximum Altitude
+
   // Simulating data load
   useEffect(() => {
     setTimeout(() => {
@@ -65,9 +68,13 @@ function DashboardLayout() {
                 <div className="metadata">
                   {/* Display metadata if needed */}
                   <p>
-                    Point Cloud Data: {pointCloudData ? "Loaded" : "Not Loaded"}
+                    Point Cloud Data:{" "}
+                    {pointCloudData ? <b>Loaded</b> : <b>Not Loaded</b>}
                   </p>
-                  <p>GeoJSON Data: {geoJsonData ? "Loaded" : "Not Loaded"}</p>
+                  <p>
+                    GeoJSON Data:{" "}
+                    {geoJsonData ? <b>Loaded</b> : <b>Not Loaded</b>}
+                  </p>
                 </div>
               </div>
             </div>
@@ -115,6 +122,28 @@ function DashboardLayout() {
                       onChange={() => setColorByAltitude(!colorByAltitude)}
                     />
                   </label>
+                  <label>
+                    Min Altitude:
+                    <input
+                      type="number"
+                      value={minAltitude}
+                      onChange={(e) =>
+                        setMinAltitude(parseFloat(e.target.value).toFixed(6))
+                      }
+                      step="0.000001" // Controls the precision of the number input
+                    />
+                  </label>
+                  <label>
+                    Max Altitude:
+                    <input
+                      type="number"
+                      value={maxAltitude}
+                      onChange={(e) =>
+                        setMaxAltitude(parseFloat(e.target.value).toFixed(6))
+                      }
+                      step="0.000001" // Controls the precision of the number input
+                    />
+                  </label>
                 </div>
               </div>
             )}
@@ -127,13 +156,17 @@ function DashboardLayout() {
               )}
 
               {activeTab === "3D" && pointCloudData && (
-                <ThreeDViewer
-                  pointCloudData={pointCloudData || []}
-                  pointSize={pointSize}
-                  colorByAltitude={colorByAltitude}
-                  setPointSize={setPointSize}
-                  setColorByAltitude={setColorByAltitude}
-                />
+                <div className="d-data">
+                  <ThreeDViewer
+                    pointCloudData={pointCloudData || []}
+                    pointSize={pointSize}
+                    colorByAltitude={colorByAltitude}
+                    setPointSize={setPointSize}
+                    setColorByAltitude={setColorByAltitude}
+                    minAltitude={minAltitude}
+                    maxAltitude={maxAltitude}
+                  />
+                </div>
               )}
               {activeTab === "GIS" && geoJsonData && (
                 <GISViewer
