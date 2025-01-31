@@ -9,6 +9,7 @@
     "mapbox-gl": "^3.9.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-mapbox-gl": "^5.1.1",
     "react-scripts": "5.0.1",
     "three": "^0.172.0"
   },
