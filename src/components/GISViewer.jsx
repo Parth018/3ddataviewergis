@@ -15,6 +15,12 @@ function GISViewer({ geoJsonData, isSidebarOpen }) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
+  // const [filteredData, setFilteredData] = useState(geoJsonData); // State to store filtered data
+  // const [currentPointIndex, setCurrentPointIndex] = useState(0); // For time-series animation
+  // const [animationInterval, setAnimationInterval] = useState(null); // Store interval ID for animation
+  // const mapRef = useRef(null); // Reference to store the map instance
+  // const [tags, setTags] = useState([]); // State for unique tags
+
   useEffect(() => {
     const handleResize = () => {
       setWindowHeight(window.innerHeight); // Update the height on resize
@@ -189,6 +195,46 @@ function GISViewer({ geoJsonData, isSidebarOpen }) {
       if (popupRef.current) popupRef.current.remove(); // Cleanup popup
     };
   }, [geoJsonData, isSidebarOpen]);
+
+
+   // Handle Time-Series Animation
+  //  const startAnimation = () => {
+  //   if (animationInterval) {
+  //     clearInterval(animationInterval);
+  //   }
+
+  //   setCurrentPointIndex(0); // Reset animation to first point
+
+  //   const interval = setInterval(() => {
+  //     const point = filteredData.features[currentPointIndex];
+  //     if (point) {
+  //       updateAnimationPosition(point);
+  //       setCurrentPointIndex((prevIndex) => (prevIndex + 1) % filteredData.features.length);
+  //     }
+  //   }, 1000); // Adjust interval time for animation speed
+  //   setAnimationInterval(interval);
+  // };
+
+  // const updateAnimationPosition = (point) => {
+  //   const map = mapRef.current; // Access map from the reference
+  //   if (!map) return; // Ensure map is initialized
+
+  //   const { coordinates } = point.geometry;
+  //   map.flyTo({ center: coordinates, essential: true });
+  // };
+
+  // // Filter points based on the selected tag
+  // const filterByTag = (event) => {
+  //   const selectedTag = event.target.value;
+  //   const filtered = selectedTag === "all" 
+  //     ? geoJsonData.features 
+  //     : geoJsonData.features.filter((feature) => feature.properties.tags.includes(selectedTag));
+
+  //   setFilteredData({ type: "FeatureCollection", features: filtered });
+  //   startAnimation(); // Restart the animation with the filtered data
+  // };
+
+  
 
   return (
     <div

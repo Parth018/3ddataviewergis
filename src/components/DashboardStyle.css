@@ -236,7 +236,7 @@
   justify-content: center;
   align-items: center;
   padding: 20px;
-  background-color: lightgray;
+  background-color: rgb(213, 206, 185);
   height: 100%; /* Ensure it occupies the full height */
   width: 100%; /* Ensure it fills the parent */
   overflow: hidden; /* Prevent content overflow */
