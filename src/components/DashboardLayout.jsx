@@ -15,7 +15,7 @@ function LoadingAnimation() {
 function DashboardLayout() {
   const [pointCloudData, setPointCloudData] = useState(null);
   const [geoJsonData, setGeoJsonData] = useState(null);
-  const [pointSize, setPointSize] = useState(0.05); // State for point size
+  const [pointSize, setPointSize] = useState(0); // State for point size
   const [colorByAltitude, setColorByAltitude] = useState(true); // State for color by altitude
   const [activeTab, setActiveTab] = useState(""); // Default active tab is '3D'
   const [loading, setLoading] = useState(true); // State to track loading status
@@ -23,7 +23,7 @@ function DashboardLayout() {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen); // Toggle sidebar open/close
   const timeoutRef = useRef(null); // Use useRef to store the timeout ID
   const [minAltitude, setMinAltitude] = useState(-Infinity); // Minimum Altitude
-  const [maxAltitude, setMaxAltitude] = useState(1000);  // Maximum Altitude
+  const [maxAltitude, setMaxAltitude] = useState(0);  // Maximum Altitude
 
   // Function to handle altitude range change
   const handleAltitudeChange = (e) => {
@@ -112,12 +112,13 @@ function DashboardLayout() {
                     Point Size:
                     <input
                       type="range"
-                      min="0.01"
+                      min="-0.1"
                       max="0.1"
                       step="0.01"
                       value={pointSize}
                       onChange={(e) => setPointSize(parseFloat(e.target.value))}
                     />
+                    <span>{pointSize}px</span>
                   </label>
                   <label>
                     Color by Altitude:
@@ -128,7 +129,7 @@ function DashboardLayout() {
                     />
                   </label>
                   <label>
-                    Adjust Altitude Range:
+                  Filter Altitude Range:
                     {/* <input
                       type="number"
                       value={minAltitude}

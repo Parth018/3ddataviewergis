@@ -61,9 +61,9 @@ const ThreeDViewer = ({
         // }
 
         // Log the min and max altitudes in your point cloud
-        console.log(`Min Z (Altitude): ${minZ}`);
-        console.log(`Max Z (Altitude): ${maxZ}`);
-
+        //console.log(`Min Z (Altitude): ${minZ}`);
+        //console.log(`Max Z (Altitude): ${maxZ}`);
+        
         // Apply colors based on altitude
         for (let i = 2, j = 0; i < positions.length; i += 3, j += 3) {
           const z = positions[i];
@@ -76,6 +76,7 @@ const ThreeDViewer = ({
         }
 
         geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+       
       }
     };
 
@@ -129,7 +130,7 @@ const ThreeDViewer = ({
           );
 
           pointCloud.material.vertexColors = colorByAltitude ? true : false;
-
+          console.log(`pointSize: ${pointSize}`);
           scene.add(pointCloud);
         });
       } else if (file.name.endsWith(".ply")) {
@@ -182,6 +183,7 @@ const ThreeDViewer = ({
           );
 
           const points = new THREE.Points(geometry, material);
+          console.log(`pointSize: ${pointSize}`);
           scene.add(points);
         });
       } else if (file.name.endsWith(".xyz")) {
