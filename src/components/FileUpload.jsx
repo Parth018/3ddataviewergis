@@ -95,7 +95,9 @@ const FileUpload = ({ setPointCloudData, setGeoJsonData, onFileUpload }) => {
           {fileInfo && (
             <>
               <p className="point-cloud-matrix">Point Cloud Matrix: </p>
-              <p>Number of Points: {fileInfo.points}</p>
+              <p>
+                Number of Points: <b>{fileInfo.points}</b>
+              </p>
               <div className="bounding-box">
                 Bounding Box:
                 <ul>
