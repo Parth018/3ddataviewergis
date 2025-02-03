@@ -9,68 +9,76 @@ const FileUpload = ({ setPointCloudData, setGeoJsonData, onFileUpload }) => {
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     if (!selectedFile) return;
+    if (file && file.size > 100 * 1024 * 1024) {
+      // 100MB
+      alert("File size exceeds the 100MB limit.");
+      setErrorMessage(
+        "File size exceeds the 100MB limit. Please upload a smaller file."
+      );
+      event.target.value = ""; // Clear the input field
+    } else {
+      setErrorMessage("");
+      setFile(selectedFile);
+      setIsProcessing(true); // Start processing
 
-    setErrorMessage("");
-    setFile(selectedFile);
-    setIsProcessing(true); // Start processing
+      const fileExtension = selectedFile.name.split(".").pop().toLowerCase();
+      const reader = new FileReader();
 
-    const fileExtension = selectedFile.name.split(".").pop().toLowerCase();
-    const reader = new FileReader();
+      reader.onload = (event) => {
+        const fileData = event.target.result;
+        const content = reader.result;
 
-    reader.onload = (event) => {
-      const fileData = event.target.result;
-      const content = reader.result;
+        if (
+          fileExtension === "pcd" ||
+          fileExtension === "xyz" ||
+          fileExtension === "ply"
+        ) {
+          try {
+            const lines = content.split("\n");
+            const points = lines.length;
+            //console.log(points);
+            const vertices = [];
 
-      if (
-        fileExtension === "pcd" ||
-        fileExtension === "xyz" ||
-        fileExtension === "ply"
-      ) {
-        try {
-          const lines = content.split("\n");
-          const points = lines.length;
-          //console.log(points);
-          const vertices = [];
+            lines.forEach((line) => {
+              const [x, y, z] = line.trim().split(" ").map(Number);
+              if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
+                vertices.push([x, y, z]);
+              }
+            });
 
-          lines.forEach((line) => {
-            const [x, y, z] = line.trim().split(" ").map(Number);
-            if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
-              vertices.push([x, y, z]);
-            }
-          });
+            const boundingBox = {
+              minX: Math.min(...vertices.map((v) => v[0])),
+              maxX: Math.max(...vertices.map((v) => v[0])),
+              minY: Math.min(...vertices.map((v) => v[1])),
+              maxY: Math.max(...vertices.map((v) => v[1])),
+              minZ: Math.min(...vertices.map((v) => v[2])),
+              maxZ: Math.max(...vertices.map((v) => v[2])),
+            };
+            const fileMetadata = {
+              points,
+              boundingBox,
+            };
 
-          const boundingBox = {
-            minX: Math.min(...vertices.map((v) => v[0])),
-            maxX: Math.max(...vertices.map((v) => v[0])),
-            minY: Math.min(...vertices.map((v) => v[1])),
-            maxY: Math.max(...vertices.map((v) => v[1])),
-            minZ: Math.min(...vertices.map((v) => v[2])),
-            maxZ: Math.max(...vertices.map((v) => v[2])),
-          };
-          const fileMetadata = {
-            points,
-            boundingBox,
-          };
-
-          setFileInfo(fileMetadata);
-          onFileUpload({ file: selectedFile, vertices });
-        } catch (err) {
-          setErrorMessage("Error parsing point cloud data");
+            setFileInfo(fileMetadata);
+            onFileUpload({ file: selectedFile, vertices });
+          } catch (err) {
+            setErrorMessage("Error parsing point cloud data");
+          }
+        } else if (fileExtension === "json") {
+          try {
+            const geoJsonData = JSON.parse(fileData);
+            setGeoJsonData(geoJsonData);
+          } catch (err) {
+            setErrorMessage("Error parsing GeoJSON data");
+          }
+        } else {
+          setErrorMessage("Unsupported file type.");
         }
-      } else if (fileExtension === "json") {
-        try {
-          const geoJsonData = JSON.parse(fileData);
-          setGeoJsonData(geoJsonData);
-        } catch (err) {
-          setErrorMessage("Error parsing GeoJSON data");
-        }
-      } else {
-        setErrorMessage("Unsupported file type.");
-      }
-      setIsProcessing(false); // End processing
-    };
+        setIsProcessing(false); // End processing
+      };
 
-    reader.readAsText(selectedFile);
+      reader.readAsText(selectedFile);
+    }
   };
 
   return (
